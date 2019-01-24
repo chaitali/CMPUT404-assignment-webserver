@@ -1,6 +1,5 @@
 #  coding: utf-8 
 import socketserver
-import requests
 import os
 
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
