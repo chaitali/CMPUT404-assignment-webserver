@@ -28,12 +28,15 @@ import os
 
 # try: curl -v -X GET http://127.0.0.1:8080/
 
+
+
 # From https://www.tutorialspoint.com/http/http_responses.htm
 class HTTPResponse:
-    def __init__(self, status, content_type=None, message=None):
+    def __init__(self, status, content_type=None, message=None, location=None):
         self.status = status
         self.content_type = content_type
         self.message = message
+        self.location = location
 
     def status_line(self):
         return "HTTP/1.1 {self.status}\n".format(self=self)
@@ -48,6 +51,8 @@ class HTTPResponse:
 
     def format_response(self):
         response = self.status_line()
+        if(self.location):
+            response += self.location_line()
         if(self.message):
             response += self.content_lines() + "\n" + self.message
         return response
@@ -68,7 +73,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
             if(page.endswith("/")):
                 path += "/index.html"
             else:
-                return HTTPResponse("301 Moved Permanently")
+                return HTTPResponse("301 Moved Permanently", location=(page + "/"))
         # https://stackoverflow.com/questions/5137497/find-current-directory-and-files-directory
         if(os.path.exists(path) and (os.path.abspath("www") in path)):
             return self.handle_file(path)
